@@ -1,17 +1,13 @@
 __author__ = 'maulisye'
+import os
 from preproses import *
-from alignerTAAutoChunk import *
-import sys
-#reload(sys)
-#sys.setdefaultencoding('utf8')
+# from alignerTAAutoChunk import *
 import time
 import  nltk
 from nltk import FreqDist
 
 start_time=time.time()
-#headlinesC ='dataTA/gabung.txt' #udah di chunk yang headline
-headlinesC ='dataTA/data/gabungan.txt' #Coba aja dulu hehehe
-#headline ='dataTA/STSint.testinput.headlines.sent2.txt'
+headlinesC ='dataTA/data/gabungan.txt'
 
 # membaca inputan Data chunk
 data = open((headlinesC).lower())
@@ -65,7 +61,15 @@ hasilPFA=[]
 #align_ppdb (jml_line,aligned_word1PPDB,aligned_word2PPDB,tokenW1,tokenW2)
 
 #for k in range(0,jml_line-300):
-for k in range(0,2):
+
+def Kata_Identik(word1,word2):
+    if word1 ==word2:
+        return 1
+    else:
+        return 0
+
+
+for k in range(0,jml_line):
      print ("==========================================================================================================================")
      print ("==========================================================================================================================")
      print ("Pasangan ayat Al-qur'an Ke- ",k+1)
@@ -73,8 +77,8 @@ for k in range(0,2):
      print "ayat 2 = ",couple[k][1]
      r1 = []
      r2 = []
-     text1 = nltk.word_tokenize(Hapus_stopword((couple[k][0]).lower()))
-     text2 = nltk.word_tokenize(Hapus_stopword((couple[k][1]).lower()))
+     text1 = nltk.word_tokenize(Removal((couple[k][0]).lower()))
+     text2 = nltk.word_tokenize(Removal((couple[k][1]).lower()))
      #print "text 1:",text1
 
      sentence1 = nltk.pos_tag(text1)
@@ -109,18 +113,18 @@ for k in range(0,2):
      HasilChunk11=[]
      HasilChunk22=[]
      for subtree1 in result1.subtrees(filter=lambda t: t.label() == 'Chunk'):
-         print "hasil subtree 1:", subtree1
+         #print "hasil subtree 1:", subtree1
          HasilChunk11.append(subtree1)
 
      for subtree2 in result2.subtrees(filter=lambda t: t.label() == 'Chunk'):
-         print "hasil subtree 2:", subtree2
+         #print "hasil subtree 2:", subtree2
          HasilChunk22.append(subtree2)
 
      Chunk1.append(HasilChunk11)
      Chunk2.append(HasilChunk22)
-     print "-------------------------------------------"
-     print "chunk 1 ya", Chunk1[k]
-     print "chunk 2 ya", Chunk2[k]
+     # print "-------------------------------------------"
+     # print "chunk 1 ya", Chunk1[k]
+     # print "chunk 2 ya", Chunk2[k]
      jmlc1=len(Chunk1[k])
      jmlc2 = len(Chunk2[k])
      jmlk1=len(set(FreqDist(text1)))
@@ -128,8 +132,6 @@ for k in range(0,2):
      print "Jumlah chunk di potongan ayat 1=",jmlc1,"jumlah kata di potongan ayat 1 =",jmlk1 ,"rata-rata =",float (jmlc1)/(jmlk1)
      print "Jumlah chunk di potongan ayat 2=", jmlc2, "jumlah kata di potongan ayat 1 =", jmlk2, "rata-rata =", float (jmlc2)/(jmlk2)
      print "==================================================="
-     #print "removal:",removeNoChunk(HasilChunk11)
-     #print "removal:",removeNoChunk(HasilChunk22)
      HasilChunkFIX1.append(removeNoChunk(HasilChunk11))
      HasilChunkFIX2.append(removeNoChunk(HasilChunk22))
      print "Hasil chunk 1 fix nih = ",HasilChunkFIX1[k]
@@ -164,11 +166,11 @@ for k in range(0,2):
          else:
              j += 1
 
-     print "w1= ",tokenW1
+     #print "w1= ",tokenW1
      print (" Hasil Proses tokenisasi : ")
      print (tokenW1[k])
      print (tokenW2[k])
-
+     print len(tokenW1[k])
      # Lemmatization
      #for k in range(0,10):
      for tes1 in range(len(tokenW1[k])):
@@ -177,34 +179,35 @@ for k in range(0,2):
 
      for tes2 in range(len(tokenW2[k])):
          #ts2 = unicode(tokenW2[y][tes2], errors='replace')
-         tokenW2[k][tes2] = prosesStemdanLem(tokenW2[k][tes2])
+         tokenW2[k][tes2] = lematisasi(tokenW2[k][tes2])
+         #print tokenW2[k][tes2],"uuuaa"
      #
      #
      print "========================================="
      print (" Hasil Proses  Stemming dan lemmatisasi :")
      print tokenW1[k]
      print tokenW2[k]
-     print "pnjng token1",len(tokenW1[k])
-     print "pnjng token2",len(tokenW2[k])
-     print "isi token w1:",tokenW1
-     print "isi token w1:", tokenW2
-     a = open('hasil/identik.txt', 'w')
-     alignIdenticalWord( jml_line,align1, align2, tokenW1, tokenW2)
-     #
-     # print "============================"
-     # print "=====Identical Alignment==== :"
-     #print align1[k]
-     # print align2[k]
-     #
 
-     # print "================================="
-     # print "======Alignment dengan PPDB======"
-     # print aligned_word1PPDB[4]
-     # print aligned_word2PPDB[4]
 
      k +=1
+word1 = []
+word2 = []
+x=0
+align_identic = 0
 
-print "tokkkkkkkkkkk :",tokenW1[1]
-print "leeeeeeeeeeeeeeen :",len(tokenW1)
+print "============================"
+print "=====Identical Alignment==== :"
+#print align1[1]
+
+
+for i in range(0, 20):
+    print "Pasangan ke - ", i+1
+    print "ayat 1 :",tokenW1[i]
+    print "ayat 2 :",tokenW2[i]
+    for j in range(0, len(tokenW1[i])):
+        print tokenW1[i][j]
+        for k in range(0, len(tokenW2[i])):
+            print "W1", tokenW1[i][j], "jodohkan dengan W2 ==>", tokenW2[i][k]
+
 
 print ("---%s seconds---"% (time.time()-start_time))
