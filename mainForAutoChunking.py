@@ -1,13 +1,15 @@
 __author__ = 'maulisye'
 import os
 from preproses import *
-# from alignerTAAutoChunk import *
+from alignerTAAutoChunk import *
+from HitungKesamaan_TA import *
 import time
 import  nltk
 from nltk import FreqDist
 
 start_time=time.time()
-headlinesC ='dataTA/data/gabungan.txt'
+#headlinesC ='dataTA/data/gabungan.txt' #alquran
+headlinesC ='dataTA/gabung.txt' # headline chunk
 
 # membaca inputan Data chunk
 data = open((headlinesC).lower())
@@ -85,17 +87,32 @@ for k in range(0,jml_line):
      sentence2 = nltk.pos_tag(text2)
      # grammar = "NP:{<DT>?<JJ>*<NN>}"
      grammar = r"""
+
+     Chunk:{<DT>?<JJ>*<NN>}
+     Chunk:{<DT>?<JJ>*<NNS>}
+     Chunk:{<CC>}
+     Chunk:{<WRB>}
+     Chunk:{<NN>*}
      Chunk:{<IN>}
      Chunk:{<RB>}
+     Chunk:{<NNS>}
      Chunk:{<V.*>}
-     Chunk:{<P> <NP>}
+     Chunk:{<TO>}
+     Chunk:{<JJ>?<JJ>?<JJ>?<NN>}
+     Chunk:{<JJ>*}
+     Chunk:{<WP>*}
+     Chunk:{<WDT>*}
+     Chunk:{<MD>*}
+     Chunk:{<PRP>*}
+     Chunk:{<JJS>*}
+     Chunk:{<P>*<NP>}
      Chunk:{<NP>?<CC>*<NP>}
      Chunk:{<PP>*<NP>}
      Chunk:{<VP>*<PRT>}
      Chunk:{<V> <NP|PP>*}
      Chunk:{<PP>*<NP>}
      Chunk:{<PRP>*<VP>*<PRT>}
-     Chunk:{<DT>?<JJ>*<NN>}
+     Chunk:{<DT>?<IN>?<JJ>*<NN>?<NNS>}
      """
      cp = nltk.RegexpParser(grammar)
      result1 = cp.parse(sentence1)
@@ -105,10 +122,10 @@ for k in range(0,jml_line):
      r2.append(result2)
 
 
-     print (" Pasangan ayat Al-quran yang sudah di chunk :")
+     #print (" Pasangan ayat Al-quran yang sudah di chunk :")
      #nampilin parsernya
-     print "result1",result1
-     print "result2",result2
+     # print "result1",result1
+     # print "result2",result2
      jml=0
      HasilChunk11=[]
      HasilChunk22=[]
@@ -129,8 +146,8 @@ for k in range(0,jml_line):
      jmlc2 = len(Chunk2[k])
      jmlk1=len(set(FreqDist(text1)))
      jmlk2 = len(set(FreqDist(text2)))
-     print "Jumlah chunk di potongan ayat 1=",jmlc1,"jumlah kata di potongan ayat 1 =",jmlk1 ,"rata-rata =",float (jmlc1)/(jmlk1)
-     print "Jumlah chunk di potongan ayat 2=", jmlc2, "jumlah kata di potongan ayat 1 =", jmlk2, "rata-rata =", float (jmlc2)/(jmlk2)
+     #print "Jumlah chunk di potongan ayat 1=",jmlc1,"jumlah kata di potongan ayat 1 =",jmlk1 ,"rata-rata =",float (jmlc1)/(jmlk1)
+     #print "Jumlah chunk di potongan ayat 2=", jmlc2, "jumlah kata di potongan ayat 1 =", jmlk2, "rata-rata =", float (jmlc2)/(jmlk2)
      print "==================================================="
      HasilChunkFIX1.append(removeNoChunk(HasilChunk11))
      HasilChunkFIX2.append(removeNoChunk(HasilChunk22))
@@ -207,7 +224,9 @@ for i in range(0, 20):
     for j in range(0, len(tokenW1[i])):
         print tokenW1[i][j]
         for k in range(0, len(tokenW2[i])):
-            print "W1", tokenW1[i][j], "jodohkan dengan W2 ==>", tokenW2[i][k]
+            print "W1", tokenW1[i][j], "jodohkan dengan W2 ==>", tokenW2[i][k],"skornya ===>",Skor(tokenW1[i][j],tokenW2[i][k]),alignmentChunk(tokenW1[i][j],tokenW2[i][k])
 
+
+print "evaluasi"
 
 print ("---%s seconds---"% (time.time()-start_time))
