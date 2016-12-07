@@ -1,14 +1,24 @@
 __author__ = 'maulisye'
 
 import difflib
-def Skor(tokenW1,tokenW2):
+import re
+def NoSpasi(token):
+    token = re.sub(r' ', '', str(token))
+    token = re.sub('\n', '', str(token))
+    return token
+def Skor(a,b):
     # tokenW1=[]
     # tokenW2=[]
-    seq= difflib.SequenceMatcher(tokenW1,tokenW2)
-    d= seq.ratio()*5
-    return d
+    a=NoSpasi(a.lower())
+    b=NoSpasi(b.lower())
+    seq = difflib.SequenceMatcher(None,a, b)
+    d = seq.ratio() *5
+    return round(d,1), "1=",a,"2=",b
 
-#------------------------------------------------------------------------------------------------#
+i='mediterranean  sea '
+ii='russia '
+print Skor(i,ii)
+#------------------------------------------------e------------------------------------------------#
 #Monoligual alignment
 
 def PerhitunganIdentik(aligned_word1, aligned_word2,W1, W2,s_identic,content_word,num_lines):
@@ -105,4 +115,3 @@ def seq_prop(sequencelist,numlines,W1,W2,sim):
             prop2 = sum / len(W1)
             skor = 5*(2*(prop1*prop2)/(prop1+prop2+1))
             sim.append(str(skor)+'\n')
-
